@@ -81,7 +81,8 @@ router.post("/signup", (req, res) => {
             .hash(password, saltRounds)
             .then((hashedPassword) => {
               const newUser = new User({
-                name,
+                firstName,
+                lastName,
                 email,
                 password: hashedPassword,
                 dateOfBirth,
