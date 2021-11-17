@@ -11,17 +11,17 @@ const inFormat = (value) => {
   let restricted = "!~`@#$%^&*()-+=\|}]{[':;/?><èéêëēėęÈÉÊËĒĖĘŸÿûüùúūÛÜÙÚŪîïíīįìÎÏÍĪĮÌôöòóœøōõÔÖÒÓŒØŌÕàáâäæãåāÀÁÂÄÆÃÅĀßśšŚŠžźżŽŹŻçćčÇĆČÑŃñń"
   if (value.length > 1){
     for (let c = 0; c < value.length; c++){
-      if (restricted.includes(value[c]) || value[c] == "'" || value[c] == " " || value[c] == " \" "){
+      if (restricted.includes(value[c]) || value[c] == " " || value[c] == " \" "){
         return false;
       }
     }
   }
-  else {
-    if (value == " "){
+  else { // either 0 or 1
+    if (value == " " || value == "" ){
       return false;
     }
     for (let c = 0; c < value.length; c++){
-      if (restricted.includes(value[c]) || value[c] == "'"  || value[c] == " \" " || value[c] == " "){
+      if (restricted.includes(value[c]) || value[c] == " \" " ){
         return false;
       }
     }
@@ -32,7 +32,8 @@ const inFormat = (value) => {
 // Signup
 router.post("/signup", (req, res) => {
   let { firstName, lastName, email, password, insta } = req.body;
-  name = name.trim();
+  firstName = firstName.trim();
+  lastName = lastName.trim();
   email = email.trim();
   password = password.trim();
   insta = insta.trim();
@@ -42,7 +43,7 @@ router.post("/signup", (req, res) => {
       status: "FAILED",
       message: "Empty input fields!",
     });
-  } else if (!/^[a-zA-Z ]*$/.test(firstName) && !/^[a-zA-Z ]*$/.test(lastName)) {
+  } else if (!(/^[a-zA-Z ]*$/.test(firstName) || /^[a-zA-Z ]*$/.test(lastName))) {
     res.json({
       status: "FAILED",
       message: "Invalid name entered",
