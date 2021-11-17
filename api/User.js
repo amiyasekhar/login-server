@@ -7,15 +7,37 @@ const User = require("./../models/User");
 // Password handler
 const bcrypt = require("bcrypt");
 
+const inFormat = (value) => {
+  let restricted = "!~`@#$%^&*()-+=\|}]{[':;/?><èéêëēėęÈÉÊËĒĖĘŸÿûüùúūÛÜÙÚŪîïíīįìÎÏÍĪĮÌôöòóœøōõÔÖÒÓŒØŌÕàáâäæãåāÀÁÂÄÆÃÅĀßśšŚŠžźżŽŹŻçćčÇĆČÑŃñń"
+  if (value.length > 1){
+    for (let c = 0; c < value.length; c++){
+      if (restricted.includes(value[c]) || value[c] == "'" || value[c] == " " || value[c] == " \" "){
+        return false;
+      }
+    }
+  }
+  else {
+    if (value == " "){
+      return false;
+    }
+    for (let c = 0; c < value.length; c++){
+      if (restricted.includes(value[c]) || value[c] == "'"  || value[c] == " \" " || value[c] == " "){
+        return false;
+      }
+    }
+  }
+  return true;
+}
+
 // Signup
 router.post("/signup", (req, res) => {
-  let { name, email, password, dateOfBirth } = req.body;
+  let { firstName, lastName, email, password, insta } = req.body;
   name = name.trim();
   email = email.trim();
   password = password.trim();
-  dateOfBirth = dateOfBirth.trim();
+  insta = insta.trim();
 
-  if (name == "" || email == "" || password == "" || dateOfBirth == "") {
+  if (firstName == "" || firstName == "None" || lastName == "" || lastName == "None" || email == "" || email == "email@email.com" || password == "" || !(inFormat(insta))) {
     res.json({
       status: "FAILED",
       message: "Empty input fields!",
@@ -30,15 +52,15 @@ router.post("/signup", (req, res) => {
       status: "FAILED",
       message: "Invalid email entered",
     });
-  } else if (!new Date(dateOfBirth).getTime()) {
+  } else if (!inFormat(insta)) {
     res.json({
       status: "FAILED",
-      message: "Invalid date of birth entered",
+      message: "Invalid instagram username",
     });
   } else if (password.length < 8) {
     res.json({
       status: "FAILED",
-      message: "Password is too short!",
+      message: "Password is less than 8 characters",
     });
   } else {
     // Checking if user already exists
