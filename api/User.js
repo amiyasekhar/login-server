@@ -85,7 +85,7 @@ router.post("/signup", (req, res) => {
                 lastName,
                 email,
                 password: hashedPassword,
-                dateOfBirth,
+                insta,
               });
 
               newUser
