@@ -9,18 +9,18 @@ const bcrypt = require("bcrypt");
 
 const inFormat = (value) => {
   let restricted = "!~`@#$%^&*()-+=\|}]{[':;/?><èéêëēėęÈÉÊËĒĖĘŸÿûüùúūÛÜÙÚŪîïíīįìÎÏÍĪĮÌôöòóœøōõÔÖÒÓŒØŌÕàáâäæãåāÀÁÂÄÆÃÅĀßśšŚŠžźżŽŹŻçćčÇĆČÑŃñń"
-  if (value.length > 1){
+  if (value.length > 1){ //2 characters or more
     for (let c = 0; c < value.length; c++){
       if (restricted.includes(value[c]) || value[c] == " " || value[c] == " \" "){
         return false;
       }
     }
   }
-  else { // either 0 or 1
+  else { // length <= 1
     if (value == " " || value == "" ){
       return false;
     }
-    for (let c = 0; c < value.length; c++){
+    for (let c = 0; c < value.length; c++){ // length is 1
       if (restricted.includes(value[c]) || value[c] == " \" " ){
         return false;
       }
@@ -41,28 +41,33 @@ router.post("/signup", (req, res) => {
   if (firstName == "" || firstName == "None" || lastName == "" || lastName == "None" || email == "" || email == "email@email.com" || password == "" || !(inFormat(insta))) {
     res.json({
       status: "FAILED",
-      message: "Empty input fields!",
+      message: "Invalid input fields!",
     });
+    console.log("Invalid input fields!")
   } else if (!(/^[a-zA-Z ]*$/.test(firstName) || /^[a-zA-Z ]*$/.test(lastName))) {
     res.json({
       status: "FAILED",
       message: "Invalid name entered",
     });
+    console.log("Invalid name entered")
   } else if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
     res.json({
       status: "FAILED",
       message: "Invalid email entered",
     });
+    console.log("Invalid email entered")
   } else if (!inFormat(insta)) {
     res.json({
       status: "FAILED",
       message: "Invalid instagram username",
     });
+    console.log("Invalid instagram username")
   } else if (password.length < 8) {
     res.json({
       status: "FAILED",
       message: "Password is less than 8 characters",
     });
+    console.log("Password is less than 8 characters")
   } else {
     // Checking if user already exists
     User.find({ email })
@@ -73,6 +78,7 @@ router.post("/signup", (req, res) => {
             status: "FAILED",
             message: "User with the provided email already exists",
           });
+          console.log("User with the provided email already exists")
         } else {
           // Try to create new user
 
@@ -103,6 +109,7 @@ router.post("/signup", (req, res) => {
                     status: "FAILED",
                     message: "An error occurred while saving user account!",
                   });
+                  console.log("An error occurred while saving user account!")
                 });
             })
             .catch((err) => {
@@ -110,6 +117,7 @@ router.post("/signup", (req, res) => {
                 status: "FAILED",
                 message: "An error occurred while hashing password!",
               });
+              console.log("An error occurred while hashing password!")
             });
         }
       })
