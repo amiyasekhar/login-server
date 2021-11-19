@@ -54,13 +54,23 @@ router.post("/updateInsta", async (req, res) => {
           await bcrypt.compare(password, hashedPassword)
         if (result){
           //Password match
-          user.insta = insta
-          await user.save()
-          res.json({
-            status: "SUCCESS",
-            message: "insta updated",
-            data: data,
-          })
+          if (inFormat(insta)){
+            //insta is valid
+            user.insta = insta
+            await user.save()
+            res.json({
+              status: "SUCCESS",
+              message: "insta updated",
+              data: data,
+            })
+
+          }
+          else{
+            res.json({
+              status: "FAILED",
+              message: "Invalid instagram",
+            })
+          }
         }
         else{
           res.json({
@@ -68,6 +78,12 @@ router.post("/updateInsta", async (req, res) => {
             message: "Invalid password entered!",
           });
         }
+      }
+      else{
+        res.json({
+          status: "FAILED",
+          message: "User doesn't exist",
+        })
       }
     }
   }
