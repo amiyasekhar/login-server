@@ -28,17 +28,62 @@ const inFormat = (value) => {
   }
   return true;
 }
-
+//router.post update insta (email, password, insta)
 // Signup
+
+router.post("/updateInsta", async (req, res) => {
+  try{
+    let{email, password, insta} = req.body;
+    email = email.trim();
+    password = password.trim();
+
+    if (email == "" || password == ""){
+      res.json({
+        status: "FAILED",
+        message: "Empty credentials supplied",
+      });
+    }
+    else{
+      //check if user exist
+      let user = await User.find({email})
+      if (user.length){
+        //User exists
+        user = user[0]
+        const hashedPassword = user.password;
+        const result = 
+          await bcrypt.compare(password, hashedPassword)
+        if (result){
+          //Password match
+          user.insta = insta
+          await user.save()
+          res.json({
+            status: "SUCCESS",
+            message: "insta updated",
+            data: data,
+          })
+        }
+        else{
+          res.json({
+            status: "FAILED",
+            message: "Invalid password entered!",
+          });
+        }
+      }
+    }
+  }
+  catch(err){
+    res.json({status:"FAILED", message:"an error occurred in signin"})
+  }
+});
+
 router.post("/signup", (req, res) => {
-  let { firstName, lastName, email, password, insta } = req.body;
+  let { firstName, lastName, email, password } = req.body;
   firstName = firstName.trim();
   lastName = lastName.trim();
   email = email.trim();
   password = password.trim();
-  insta = insta.trim();
 
-  if (firstName == "" || firstName == "None" || lastName == "" || lastName == "None" || email == "" || email == "email@email.com" || password == "" || !(inFormat(insta))) {
+  if (firstName == "" || firstName == "None" || lastName == "" || lastName == "None" || email == "" || email == "email@email.com" || password == "") {
     res.json({
       status: "FAILED",
       message: "Invalid input fields!",
@@ -56,12 +101,6 @@ router.post("/signup", (req, res) => {
       message: "Invalid email entered",
     });
     console.log("Invalid email entered")
-  } else if (!inFormat(insta)) {
-    res.json({
-      status: "FAILED",
-      message: "Invalid instagram username",
-    });
-    console.log("Invalid instagram username")
   } else if (password.length < 8) {
     res.json({
       status: "FAILED",
@@ -70,6 +109,7 @@ router.post("/signup", (req, res) => {
     console.log("Password is less than 8 characters")
   } else {
     // Checking if user already exists
+    //User.find
     User.find({ email })
       .then((result) => {
         if (result.length) {
@@ -91,8 +131,7 @@ router.post("/signup", (req, res) => {
                 firstName,
                 lastName,
                 email,
-                password: hashedPassword,
-                insta,
+                password: hashedPassword
               });
 
               newUser
@@ -190,3 +229,6 @@ router.post("/signin", (req, res) => {
 });
 
 module.exports = router;
+
+//http://localhost:3000/user/signup
+//https://salty-lowlands-01278.herokuapp.com/user/signup
