@@ -89,6 +89,7 @@ router.post("/updateInsta", async (req, res) => {
     }
   }
   catch(err){
+    console.log(err)
     res.json({status:"FAILED", message:"an error occurred in signin"})
   }
 });
