@@ -36,7 +36,7 @@ router.post("/updateInsta", async (req, res) => {
     let{email, password, insta} = req.body;
     email = email.trim();
     password = password.trim();
-    insta = insta.trim();
+    insta = insta && insta.trim();
 
     if (email == "" || password == ""){
       res.json({
